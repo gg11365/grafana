@@ -575,6 +575,10 @@ type Cfg struct {
 	// News Feed
 	NewsFeedEnabled bool
 
+	// Branding
+	AppTitle      string
+	AppFaviconURL string
+
 	// Experimental scope settings
 	ScopesListScopesURL     string
 	ScopesListDashboardsURL string
@@ -1325,6 +1329,10 @@ func (cfg *Cfg) parseINIFile(iniFile *ini.File) error {
 
 	news := iniFile.Section("news")
 	cfg.NewsFeedEnabled = news.Key("news_feed_enabled").MustBool(true)
+
+	branding := iniFile.Section("branding")
+	cfg.AppTitle = branding.Key("app_title").MustString("Grafana")
+	cfg.AppFaviconURL = branding.Key("app_favicon_url").MustString("")
 
 	queryHistory := iniFile.Section("query_history")
 	cfg.QueryHistoryEnabled = queryHistory.Key("enabled").MustBool(true)
