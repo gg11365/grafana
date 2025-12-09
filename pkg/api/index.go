@@ -189,9 +189,9 @@ func (hs *HTTPServer) setIndexViewData(c *contextmodel.ReqContext) (*dtos.IndexV
 		NewGrafanaVersionExists:             hs.grafanaUpdateChecker.UpdateAvailable(),
 		AppName:                             setting.ApplicationName,
 		AppNameBodyClass:                    "app-grafana",
-		FavIcon:                             template.URL(assets.ContentDeliveryURL + "public/build/img/fav32.png"),            // #nosec G203
+		FavIcon:                             hs.getFavIconURL(assets.ContentDeliveryURL),
 		AppleTouchIcon:                      template.URL(assets.ContentDeliveryURL + "public/build/img/apple-touch-icon.png"), // #nosec G203
-		AppTitle:                            "Grafana",
+		AppTitle:                            hs.Cfg.AppTitle,
 		NavTree:                             navTree,
 		Nonce:                               c.RequestNonce,
 		LoadingLogo:                         template.URL(assets.ContentDeliveryURL + "public/build/img/grafana_icon.svg"), // #nosec G203
@@ -245,6 +245,15 @@ func (hs *HTTPServer) buildUserAnalyticsSettings(c *contextmodel.ReqContext) dto
 		Identifier:         identifier,
 		IntercomIdentifier: hashUserIdentifier(identifier, hs.Cfg.IntercomSecret),
 	}
+}
+
+func (hs *HTTPServer) getFavIconURL(cdnURL string) template.URL {
+	// If a custom favicon URL is configured, use it
+	if hs.Cfg.AppFaviconURL != "" {
+		return template.URL(hs.Cfg.AppFaviconURL) // #nosec G203
+	}
+	// Otherwise, use the default favicon
+	return template.URL(cdnURL + "public/build/img/fav32.png") // #nosec G203
 }
 
 func (hs *HTTPServer) getUserOrgCount(c *contextmodel.ReqContext, userID int64) int {
